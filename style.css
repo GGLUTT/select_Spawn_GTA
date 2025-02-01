@@ -1,0 +1,370 @@
+body,html{
+    font-family: 'Montserrat', sans-serif;
+
+}
+
+.ico_Acces{
+    width: 25px;
+    height: 25px;
+    flex-grow: 0;
+    object-fit: contain;
+    background-color: #fff;
+}
+.bcg{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.title-1{
+    width: 176px;
+    height: 57px;
+    flex-grow: 0;
+    margin: 0 104px 29px 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 36px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #fff;
+}
+.title-2{
+    width: 254px;
+    height: 57px;
+    flex-grow: 0;
+    margin: 29px 0 0 26px;
+    font-family: Montserrat;
+    font-size: 48px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #06f;
+  
+}
+.Ellipse-2 {
+    width: 204px;
+    height: 209px;
+    flex-grow: 0;
+    margin: 0 44px 26px 0;
+    -webkit-filter: blur(400px);
+    filter: blur(200px);
+    background-color: #1d6cff;
+  }
+  .Ellipse-1 {
+    width: 283px;
+    height: 206px;
+    flex-grow: 0;
+    margin: 63px 191px 0 0;
+    -webkit-filter: blur(400px);
+    filter: blur(400px);
+    background-color: #1d6cff;
+  }
+  .conteiner{
+    margin: 5vw;
+    padding: 0;
+  }
+  .select-spawn {
+    position: relative;
+    width: auto; /* Динамічна ширина для тексту */
+    height: 120px; /* Фіксована висота для шестикутника */
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Відступ між кнопкою і текстом */
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Анімація для всього контейнера */
+}
+
+.select-spawn:hover {
+    transform: scale(1.05); /* Збільшення контейнера при наведенні */
+}
+
+/* Шестикутник (кнопка) */
+.hexagon {
+    position: relative;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease; /* Анімація для шестикутників */
+}
+
+.hexagon.large {
+    width: 120px; /* Розмір великого шестикутника */
+    height: 120px;
+    background-color: rgba(0, 88, 188, 0.25); /* Колір великого шестикутника */
+    -webkit-filter: blur(10px); /* Розмиття для великого */
+    filter: blur(10px);
+    z-index: 1;
+}
+
+.hexagon.small {
+    width: 80px; /* Розмір малого шестикутника */
+    height: 80px;
+    background-color: #0058BC; /* Колір малого шестикутника */
+    z-index: 2;
+}
+
+/* Hover-ефекти для великого шестикутника */
+.select-spawn:hover .hexagon.large {
+    background-color: rgba(0, 88, 188, 0.4); /* Зміна кольору великого шестикутника */
+    -webkit-filter: blur(5px); /* Зменшення розмиття */
+    filter: blur(5px);
+}
+
+/* Hover-ефекти для малого шестикутника */
+.select-spawn:hover .hexagon.small {
+    background-color: #007BFF; /* Зміна кольору малого шестикутника */
+    transform: scale(1.1); /* Збільшення малого шестикутника */
+}
+
+/* Іконка в центрі */
+.icon {
+    width: 25px; /* Розмір іконки */
+    height: 25px;
+    z-index: 3;
+    transition: transform 0.3s ease, filter 0.3s ease; /* Анімація для іконки */
+}
+
+/* Hover-ефекти для іконки */
+.select-spawn:hover .icon {
+    transform: rotate(15deg); /* Легке обертання іконки */
+    filter: brightness(1.2); /* Підвищення яскравості */
+}
+
+/* Текст поруч із кнопкою */
+.spawn-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #004DFF;
+    margin: 0; /* Забираємо зайві відступи */
+    white-space: nowrap; /* Забороняє перенос тексту */
+    transition: color 0.3s ease; /* Анімація кольору тексту */
+}
+
+.spawn-title.second{
+    white-space: normal;
+    font-size: 18px;
+    font-size: 8px;
+    color: #737373;
+    white-space: normal; /* Дозволяє перенос тексту */
+    display: block;
+
+}
+
+/* Hover-ефекти для тексту */
+.select-spawn:hover .spawn-title {
+    color: #007BFF; /* Зміна кольору тексту при наведенні */
+}
+
+
+
+/*  */
+
+
+
+
+/* Ефект натискання на контейнер */
+.select-spawn:active {
+    transform: scale(0.98); /* Легке зменшення кнопки */
+    transition: transform 0.1s ease; /* Плавне повернення до початкового стану */
+}
+
+/* Ефект для великого шестикутника при натисканні */
+.select-spawn:active .hexagon.large {
+    background-color: rgba(0, 88, 188, 0.6); /* Темніший фон */
+    -webkit-filter: blur(6px); /* Легке зменшення розмиття */
+    filter: blur(6px);
+}
+
+/* Ефект для малого шестикутника при натисканні */
+.select-spawn:active .hexagon.small {
+    background-color: #004D99; /* Темніший синій */
+    transform: scale(0.95); /* Легке зменшення */
+    transition: transform 0.1s ease, background-color 0.1s ease; /* Плавна зміна */
+}
+
+/* Ефект для іконки при натисканні */
+.select-spawn:active .icon {
+    transform: scale(0.9); /* Легке зменшення іконки */
+    filter: brightness(1.3); /* Трохи яскравіше */
+    transition: transform 0.1s ease, filter 0.1s ease; /* Плавність ефектів */
+}
+
+/* Ефект для тексту при натисканні */
+.select-spawn:active .spawn-title {
+    color: #0036FF; /* Темніший синій текст */
+    transition: color 0.1s ease; /* Плавна зміна кольору */
+}
+
+
+
+/* Заблокований вибір */
+.select-spawn.blocked {
+    cursor: not-allowed; /* Заборонений курсор */
+    position: relative; /* Для анімації */
+    opacity: 0.9; /* Злегка прозора кнопка */
+    transition: all 0.3s ease; /* Плавність змін */
+}
+
+/* Анімація при наведенні: пульсація */
+.select-spawn.blocked:hover .hexagon.small {
+    animation: pulse 1s infinite; /* Анімація пульсації */
+}
+
+/* Малий шестикутник для заблокованої кнопки */
+.select-spawn.blocked .hexagon.small {
+    background-color: #FF4D4D; /* Червоний малий шестикутник */
+    transition: background-color 0.3s ease;
+}
+
+/* Великий шестикутник */
+.select-spawn.blocked .hexagon.large {
+    background-color: rgba(255, 77, 77, 0.2); /* Напівпрозорий червоний */
+    -webkit-filter: blur(8px);
+    filter: blur(8px);
+    transition: background-color 0.3s ease;
+}
+
+/* Іконка */
+.select-spawn.blocked .icon {
+    filter: grayscale(100%); /* Іконка стає сірою */
+    opacity: 0.7;
+}
+
+/* Анімація пульсації */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(255, 77, 77, 0.6);
+    }
+    50% {
+        transform: scale(1.1); /* Збільшення */
+        box-shadow: 0 0 20px rgba(255, 77, 77, 0.8);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(255, 77, 77, 0.6);
+    }
+}
+
+.main_button {
+    width: 227px;
+    height: 60px;
+    margin: 90px 106px 12px 141px;
+    padding: 0; /* Забираємо внутрішні відступи */
+    border-radius: 10px;
+    background-image: linear-gradient(to right, #0058a0, #00203a); /* Градієнтний фон */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Вирівнювання кнопки всередині контейнера */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Додаємо тінь */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Плавність змін */
+}
+
+/* Ефект при наведенні на контейнер */
+.main_button:hover {
+    transform: scale(1.05); /* Легке збільшення */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Більш виражена тінь */
+}
+
+/* Стилі для кнопки всередині */
+.main_but {
+    width: 100%; /* Займає всю ширину контейнера */
+    height: 100%; /* Займає всю висоту контейнера */
+    border: none; /* Забираємо рамку */
+    border-radius: 10px; /* Збігається з радіусом контейнера */
+    background: none; /* Прозорий фон */
+    color: #ffffff; /* Білий текст */
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer; /* Вказівник при наведенні */
+    transition: color 0.2s ease, transform 0.2s ease; /* Плавність для тексту */
+}
+
+/* Ефект при натисканні */
+.main_but:active {
+    transform: scale(0.95); /* Легке зменшення */
+    color: #d1e8ff; /* Світліший текст */
+}
+
+.header {
+    display: flex;
+    justify-content: flex-start; /* Переносить весь блок до лівого краю */
+    align-items: center;
+    height: 100px;
+    color: white;
+    text-align: center;
+    padding-left: 20px; /* Відступ від лівого краю (за бажанням) */
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.title-main {
+    width: 176px;
+    height: 57px;
+    flex-grow: 0;
+    margin: 0 104px 29px 0;
+    font-family: Montserrat;
+    font-size: 36px;
+    font-weight: bold;
+    text-align: left;
+    color: #fff;
+}
+
+.header-icon img {
+    width: 22.6px;
+    height: 17.3px;
+}
+
+.title-sub {
+    width: 254px;
+    height: 57px;
+    flex-grow: 0;
+    margin: 130px 2px -131px -200px;
+    font-family: Montserrat;
+    font-size: 48px;
+    font-weight: bold;
+    text-align: left;
+    color: #06f;
+}
+
+.block {
+    width: 45px;
+    height: 27px;
+    flex-grow: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 10px;
+    margin: 8px 82px 51px 0; /* Забрано зайвий відступ зліва */
+    padding: 1px 9px;
+    border-radius: 10px;
+    filter: blur(1px);
+    background-color: #1d6cff;
+}
+
+
+.Ellipse-2 {
+    width: 204px;
+    height: 209px;
+    position: relative;
+    bottom: 10vw;
+    flex-grow: 0;
+    margin: 0 44px 26px 0;
+    -webkit-filter: blur(400px);
+    filter: blur(100px);
+    background-color: #1d6cff;
+  }

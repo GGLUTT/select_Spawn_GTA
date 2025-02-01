@@ -1,0 +1,434 @@
+body,html{
+    font-family: 'Montserrat', sans-serif;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+/* Основний прозорий фон із бликом */
+.bcg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(22, 21, 35, 0.9); /* Напівпрозорий фон */
+    z-index: -1; /* Відправляємо на задній план */
+    overflow: hidden;
+    isolation: isolate; /* Забезпечує коректну роботу прозорості */
+}
+
+/* Блик фону */
+.bcg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(0, 88, 188, 0) 0%, rgba(0, 88, 188, 0.5) 50%, rgba(0, 88, 188, 0) 100%);
+    background-size: 200% 200%; /* Для плавного ефекту */
+    animation: wave-glow 5s infinite; /* Анімація блику */
+    pointer-events: none; /* Забороняємо взаємодію з бликом */
+}
+
+/* Окрема хвиля */
+.wave {
+    position: absolute;
+    top: 0;
+    left: -100%; /* Початкова позиція поза екраном */
+    width: 200%; /* Розтягуємо, щоб створити ефект плавності */
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0.5; /* Напівпрозорість хвилі */
+    animation: wave-motion 8s infinite; /* Анімація хвилі */
+    pointer-events: none; /* Забороняємо взаємодію з хвилею */
+}
+
+/* ✨ Анімація для хвилі */
+@keyframes wave-motion {
+    0% {
+        transform: translateX(0); /* Початкове положення */
+    }
+    50% {
+        transform: translateX(50%); /* Хвиля рухається до центру */
+    }
+    100% {
+        transform: translateX(100%); /* Хвиля виходить за межі */
+    }
+}
+
+/* ✨ Анімація блику */
+@keyframes wave-glow {
+    0% {
+        background-position: 0% 50%; /* Початкова позиція блику */
+    }
+    50% {
+        background-position: 50% 50%; /* Блик рухається до центру */
+    }
+    100% {
+        background-position: 100% 50%; /* Блик виходить праворуч */
+    }
+}
+/* Загальний контейнер заголовка */
+.header-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px; /* Відступ від верхнього краю */
+}
+
+/* Контейнер для заголовка з іконкою */
+.icon-with-text {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Відстань між текстом і іконкою */
+    justify-content: center; /* Вирівнювання по центру */
+}
+
+/* Стилі для тексту "ВЫБОР" */
+.vibor {
+    font-size: 36px;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Стилі для тексту "СПАВНА" */
+.vibor.second {
+    font-size: 48px;
+    color: rgb(0, 102, 255);
+    font-weight: bold;
+    margin-top: 10px; /* Відступ від тексту "ВЫБОР" */
+}
+
+/* Контейнер для іконки */
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    padding: 5px;
+    border-radius: 10px;
+    background: rgb(29, 108, 255);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тінь навколо іконки */
+    filter: blur(0); /* Прибираємо розмиття */
+}
+
+/* Стилі для самої іконки */
+.icon-navigate {
+    width: 100%;
+    height: auto;
+}
+
+.icon-conteiner {
+    /* Замість абсолютного позиціонування, використовуємо relative */
+    position: relative; 
+    width: 45px;
+    height: 27px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;  /* Додано px для коректної роботи */
+    padding: 1px 9px;
+    background: rgb(29, 108, 255);
+    filter: blur(1px);
+}
+
+.icon-navigate {
+    position: absolute;
+    width: 22.63px;
+    height: 17.25px;
+    left: 50%;  /* Вирівнюємо іконку по центру */
+    top: 50%;
+    transform: translate(-50%, -50%);  /* Центруємо точку */
+}
+
+/* .conteiner{
+    position: absolute;
+width: 2239px;
+height: 1323px;
+left: -204px;
+right: -221px;
+top: -120px;
+bottom: -123px;
+} */
+
+/* Контейнер для всіх блоків */
+.select-spawn-container {
+    display: flex;
+    padding-top: 200px;
+    left: 5.5vw;
+    position: relative;
+    flex-direction: column; /* Вирівнюємо всі елементи в колонку */
+    gap: 20px; /* Відстань між блоками */
+}
+
+/* Основний контейнер кожного блоку */
+.select-spawn {
+    display: flex;
+    margin: 25px;
+    align-items: center; /* Вирівнюємо по центру по вертикалі */
+    gap: 15px; /* Відстань між блоком і текстом */
+}
+
+/* Контейнер для моделі */
+.model-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+/* Перший блок (заокруглений квадрат) */
+/* Перший блок (великий квадрат) */
+/* Перший блок (великий квадрат, зменшений) */
+.model.first {
+    position: relative;
+    width: 60px; /* Зменшений розмір */
+    height: 60px; /* Зменшений розмір */
+    background: rgba(0, 88, 188, 0.5);
+    border-radius: 12px; /* Закруглення */
+    transition: transform 0.4s ease, border-radius 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Другий блок (менший квадрат, пропорція 2:1) */
+.model.second {
+    position: absolute;
+    width: 30px; /* Половина розміру першого блоку */
+    height: 30px; /* Половина розміру першого блоку */
+    background: rgb(29, 108, 255);
+    border-radius: 8px; /* Закруглення */
+    top: 15px; /* Центруємо всередині першого блоку */
+    left: 15px; /* Центруємо всередині першого блоку */
+    transition: transform 0.4s ease, border-radius 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: -2px -2px 6px rgba(255, 255, 255, 0.3), 
+                2px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Іконка (спочатку центрована) */
+.accses-spawn {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(0deg); /* Початкове положення */
+    object-fit: contain; /* Не розтягується */
+    z-index: 2;
+    transition: transform 0.4s ease;
+}
+
+/* 🟢 Ефект при наведенні (перетворюємо в паралелограм + додаємо світіння) */
+.model-wrapper:hover .model.first {
+    transform: skewX(-20deg); /* Тепер нахилений */
+    border-radius: 12px; /* Кути зменшуються */
+    box-shadow: 0px 0px 20px rgba(0, 88, 255, 0.6); /* Світіння */
+    animation: glow-animation 1.5s infinite alternate; /* Анімація світіння */
+}
+
+.model-wrapper:hover .model.second {
+    transform: skewX(-20deg) translateY(-5px); /* Теж нахилений */
+    border-radius: 12px; /* Кути зменшуються */
+    box-shadow: 0px 0px 20px rgba(29, 108, 255, 0.6); /* Світіння */
+    animation: glow-animation 1.5s infinite alternate; /* Анімація світіння */
+}
+
+/* 🔄 Іконка обертається разом із паралелограмами */
+.model-wrapper:hover .accses-spawn {
+    transform: translate(-50%, -50%) rotate(-20deg);
+}
+
+/* ✨ Анімація світіння */
+@keyframes glow-animation {
+    0% {
+        box-shadow: 0px 0px 10px rgba(29, 108, 255, 0.4);
+    }
+    100% {
+        box-shadow: 0px 0px 25px rgba(29, 108, 255, 0.8);
+    }
+}
+
+@keyframes glow-animation-blocked {
+    0% {
+        box-shadow: 0px 0px 10px rgba(255, 138, 29, 0.4);
+    }
+    100% {
+        box-shadow: 0px 0px 25px rgba(255, 142, 29, 0.8);
+    }
+}
+
+/* Основна кнопка */
+.accept-button {
+    display: flex;
+    position: relative;
+    left: 6.5vw;
+    justify-content: center; /* Центруємо текст */
+    align-items: center;
+    width: 227px;
+    height: 60px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgb(0, 88, 160), rgb(0, 32, 58) 100%);
+    cursor: pointer; /* Курсор вказує, що це кнопка */
+    transition: all 0.3s ease; /* Плавний ефект при наведенні */
+    border: none; /* Прибираємо стандартну рамку */
+}
+
+/* Текст кнопки */
+.text-spawn-main {
+    color: rgb(255, 255, 255);
+    font-family: Montserrat, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+}
+
+/* 🟡 Ефект при наведенні */
+.accept-button:hover {
+    background: linear-gradient(90deg, rgb(0, 120, 200), rgb(0, 50, 80));
+    transform: scale(1.05); /* Легке збільшення */
+    box-shadow: 0px 0px 15px rgba(0, 88, 160, 0.6); /* Додаємо світіння */
+}
+
+
+/* 🔒 Стиль для заблокованої кнопки */
+.select-spawn.blocked {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Блокована модель */
+.select-spawn.blocked .model.first {
+    background: rgba(255, 102, 88, 0.25);
+    box-shadow: none;
+}
+
+.select-spawn.blocked .model.second {
+    background: rgb(255, 102, 88);
+    box-shadow: none;
+}
+
+/* Ефект при наведенні на заблоковану кнопку */
+.select-spawn.blocked:hover .model.first,
+.select-spawn.blocked:hover .model.second {
+    animation: glow-animation-blocked 1.5s infinite alternate; /* Анімація світіння */
+}
+
+/* Стиль тексту для заблокованої кнопки */
+.select-spawn.blocked .text-teg.first {
+    color: rgb(255, 255, 255);
+}
+
+.select-spawn.blocked .text-teg.second {
+    color: rgb(150, 150, 150);
+}
+
+/* Контейнер для тексту */
+.text-content {
+    display: flex;
+    flex-direction: column; /* Текст один під одним */
+    justify-content: center;
+}
+
+/* Заголовок 1 */
+.text-teg.first {
+    color: rgb(255, 255, 255);
+    font-family: Montserrat;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 20px;
+    text-align: left;
+    margin: 0;
+}
+
+/* Заголовок 2 */
+.text-teg.second {
+    color: rgb(115, 115, 115);
+    font-family: Montserrat;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 10px;
+    text-align: left;
+    margin-top: 5px;
+}
+
+
+.main_button {
+    width: 227px;
+    height: 60px;
+    margin: 90px 106px 12px 141px;
+    padding: 0; /* Забираємо внутрішні відступи */
+    border-radius: 10px;
+    background-image: linear-gradient(to right, #0058a0, #00203a); /* Градієнтний фон */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Вирівнювання кнопки всередині контейнера */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Додаємо тінь */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Плавність змін */
+}
+
+/* Ефект при наведенні на контейнер */
+.main_button:hover {
+    transform: scale(1.05); /* Легке збільшення */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Більш виражена тінь */
+}
+
+/* Стилі для кнопки всередині */
+.main_but {
+    width: 100%; /* Займає всю ширину контейнера */
+    height: 100%; /* Займає всю висоту контейнера */
+    border: none; /* Забираємо рамку */
+    border-radius: 10px; /* Збігається з радіусом контейнера */
+    background: none; /* Прозорий фон */
+    color: #ffffff; /* Білий текст */
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer; /* Вказівник при наведенні */
+    transition: color 0.2s ease, transform 0.2s ease; /* Плавність для тексту */
+}
+
+/* Ефект при натисканні */
+.main_but:active {
+    transform: scale(0.95); /* Легке зменшення */
+    color: #d1e8ff; /* Світліший текст */
+}
+
+.content-wrapper {
+    position: relative;
+    bottom: 0vw;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    width: 100%;
+}
+
+/* Заголовок */
+.header-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: absolute;
+    top: 5%;
+    left: 13%;
+    transform: translateX(-50%);
+}
+
+
+
+/* Корекція для мобільних пристроїв */
+@media (max-width: 768px) {
+    .header-container {
+        top: 3%; /* Менший відступ для мобільних */
+    }
+    .vibor {
+        font-size: 28px;
+    }
+    .vibor.second {
+        font-size: 32px;
+    }
+}
