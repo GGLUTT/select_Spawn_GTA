@@ -1,0 +1,11 @@
+{
+  "name": "select_spawn_gta",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "gh-pages -d . --src \"index.html\" --src \"style.css\" --src \"newstyle.css\" --src \"notifications.css\" --src \"script.js\" --src \"notifications.js\" --src \"img/**/*\" --message \"Deploy\""
+  },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
+  }
+}
