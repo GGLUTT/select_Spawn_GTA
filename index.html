@@ -1,94 +1,1196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вибір Спавна</title>
-    <link rel="stylesheet" href="newstyle.css">
-    <script src="./script.js" defer></script>
+    <title>Вибір Спавна - 3D Земля</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="notifications.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+            background: #0a0a15;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Фон зі зірками */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a15 100%);
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Заголовок */
+        .header-container {
+            text-align: center;
+            margin-bottom: 20px;
+            z-index: 10;
+            margin-top: 20px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .vibor {
+            font-size: 36px;
+            color: white;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .vibor.second {
+            font-size: 48px;
+            color: #0066ff;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 0 0 30px rgba(0, 102, 255, 0.8);
+        }
+
+        .icon-container {
+            width: 45px;
+            height: 45px;
+            background: #1d6cff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(29, 108, 255, 0.5);
+        }
+
+        /* Canvas для 3D планети */
+        .earth-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        #earthCanvas {
+            border-radius: 20px;
+            cursor: move;
+            box-shadow: 0 10px 50px rgba(0, 88, 188, 0.5);
+            background: transparent;
+        }
+
+        .instruction {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 20px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Підказка при наведенні */
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #0066ff;
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: white;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -100%) scale(0.9);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            min-width: 200px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(0, 102, 255, 0.4);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            transform: translate(-50%, calc(-100% - 15px)) scale(1);
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #0066ff;
+        }
+
+        .tooltip-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #0066ff;
+        }
+
+        .tooltip-desc {
+            font-size: 12px;
+            color: #ccc;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .tooltip-coords {
+            font-size: 11px;
+            color: #888;
+            font-family: monospace;
+        }
+
+        /* Список спавнів */
+        .spawns-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 20px;
+        }
+
+        .spawn-card {
+            background: rgba(0, 88, 188, 0.15);
+            border: 2px solid rgba(0, 88, 188, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .spawn-card:hover {
+            border-color: rgba(0, 88, 188, 0.8);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 88, 188, 0.3);
+        }
+
+        .spawn-card.selected {
+            background: rgba(0, 88, 188, 0.3);
+            border-color: #0066ff;
+            box-shadow: 0 0 30px rgba(0, 102, 255, 0.5);
+        }
+
+        .spawn-card.blocked {
+            background: rgba(255, 102, 88, 0.15);
+            border-color: rgba(255, 102, 88, 0.4);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .spawn-card.blocked:hover {
+            transform: none;
+        }
+
+        .spawn-icon {
+            width: 45px;
+            height: 45px;
+            background: #1d6cff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .spawn-card.blocked .spawn-icon {
+            background: #ff6658;
+        }
+
+        .spawn-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .spawn-text {
+            flex: 1;
+        }
+
+        .spawn-name {
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .spawn-desc {
+            color: #888;
+            font-size: 10px;
+            line-height: 1.3;
+        }
+
+        /* Кнопка спавну */
+        .accept-button {
+            padding: 16px 50px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #0058a0, #00203a);
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 88, 160, 0.4);
+        }
+
+        .accept-button:hover:not(:disabled) {
+            background: linear-gradient(90deg, #0078c8, #003250);
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 88, 160, 0.6);
+        }
+
+        .accept-button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            #earthCanvas {
+                width: 400px !important;
+                height: 400px !important;
+            }
+            
+            .spawns-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+            
+            .vibor {
+                font-size: 28px;
+            }
+            
+            .vibor.second {
+                font-size: 36px;
+            }
+        }
+
+        /* Екран завантаження */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+        .loader-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader-overlay video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* Адмін панель і модальні вікна */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            width: 640px;
+            max-width: 90vw;
+            background: rgba(10, 20, 40, 0.95);
+            border: 2px solid #0066ff;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 102, 255, 0.4);
+            color: #fff;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(0, 102, 255, 0.4);
+        }
+        .modal-title { font-weight: 700; font-size: 18px; }
+        .modal-body { padding: 16px 18px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; padding: 12px 18px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .form-row.single { grid-template-columns: 1fr; }
+        .input, .select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+        }
+        .checkbox-row { display: flex; align-items: center; gap: 8px; }
+        .btn { padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 700; }
+        .btn.primary { background: linear-gradient(90deg, #0058a0, #00203a); color: #fff; }
+        .btn.secondary { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn.danger { background: rgba(255, 80, 80, 0.9); color: #fff; }
+        .btn:hover { filter: brightness(1.1); }
+        .locations-button { position: absolute; top: 15px; right: 15px; }
+        table.locations { width: 100%; border-collapse: collapse; }
+        table.locations th, table.locations td { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 8px; font-size: 13px; }
+        table.locations th { text-align: left; color: #7fb1ff; }
+        /* Кольоровий пікер */
+        .color-picker-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .color-palette { display: flex; flex-wrap: wrap; gap: 8px; }
+        .color-swatch { width: 24px; height: 24px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.5); cursor: pointer; padding: 0; background: transparent; }
+        .color-swatch.selected { outline: 2px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,0.4) inset; }
+        .color-custom input[type="color"] { width: 36px; height: 36px; padding: 0; border: none; background: transparent; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <div class="bcg">
-        <div class="wave"></div> <!-- Окрема хвиля -->
+    <!-- Екран завантаження -->
+    <div class="loader-overlay" id="loader">
+        <video id="loaderVideo" src="img/video/load.mp4" autoplay muted playsinline></video>
     </div>
+    <div class="space-background" id="spaceBackground"></div>
     
-
-   <div class="header-container">
-    <div class="icon-with-text">
-        <h1 class="vibor">ВЫБОР</h1>
-        <div class="icon-container">
-            <img src="./img/icons/navigate.png" alt="icon-navigate" class="icon-navigate">
+    <div class="container">
+        <!-- Заголовок -->
+        <div class="header-container">
+            <div class="header-top">
+                <h1 class="vibor">ВЫБОР</h1>
+                <div class="icon-container">
+                    <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; stroke: white; fill: none; stroke-width: 2;">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+            </div>
+            <h2 class="vibor second">СПАВНА</h2>
         </div>
+
+        <!-- 3D Планета Земля -->
+        <div class="earth-container">
+            <canvas id="earthCanvas" width="500" height="500"></canvas>
+            <div class="instruction">🖱️ Перетягуйте для обертання Землі</div>
+            <div class="tooltip" id="tooltip">
+                <div class="tooltip-title"></div>
+                <div class="tooltip-desc"></div>
+                <div class="tooltip-coords"></div>
+            </div>
+        </div>
+
+        <!-- Список спавнів -->
+        <div class="spawns-grid" id="spawnsGrid"></div>
+
+        <!-- Кнопка спавну -->
+        <button class="accept-button" id="spawnButton" disabled>СПАВН</button>
+        <!-- Кнопка відкриття списку локацій -->
+        <button class="btn secondary locations-button" id="locationsButton">Локації</button>
     </div>
-    <h2 class="vibor second">СПАВНА</h2>
+
+    <script src="notifications.js"></script>
+    <script>
+        // Екран завантаження
+        const loader = document.getElementById('loader');
+        const loaderVideo = document.getElementById('loaderVideo');
+        function hideLoader() {
+            if (!loader) return;
+            if (!loader.classList.contains('hidden')) {
+                loader.classList.add('hidden');
+                setTimeout(() => loader.remove(), 700);
+            }
+        }
+        if (loaderVideo) {
+            loaderVideo.addEventListener('ended', hideLoader);
+        }
+        window.addEventListener('load', () => {
+            setTimeout(hideLoader, 8000);
+        });
+
+        // Створюємо зірки
+        const spaceBackground = document.getElementById('spaceBackground');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            const size = Math.random() * 2.5 + 0.5;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            spaceBackground.appendChild(star);
+        }
+
+        // Дані спавнів
+        const spawns = [
+            {
+                id: 1,
+                name: "МЕСТО ВЫХОДА",
+                description: "ПОСЛЕДНЕЕ МЕСТО ГДЕ ВЫ БЫЛИ",
+                lat: 50,
+                lon: 30,
+                color: "#0058bc",
+                locked: false,
+                icon: 'refresh'
+            },
+            {
+                id: 2,
+                name: "НАЧАЛЬНАЯ ПОЗИЦИЯ №1",
+                description: "МЕСТО ГДЕ ПОЯВЛЯЮТЬСЯ НОВИНЬКИЕ",
+                lat: 40,
+                lon: -74,
+                color: "#1d6cff",
+                locked: false,
+                icon: 'map-pin'
+            },
+            {
+                id: 3,
+                name: "ФРАКЦИЯ",
+                description: "МЕСТО ГДЕ ВЫ РАБОТАЕТЕ",
+                lat: 35,
+                lon: 139,
+                color: "#0058bc",
+                locked: false,
+                icon: 'users'
+            },
+            {
+                id: 4,
+                name: "ДОМ",
+                description: "ЭТА ПОЗИЦИЯ НЕДОСТУПНА",
+                lat: -33,
+                lon: 151,
+                color: "#ff6658",
+                locked: true,
+                icon: 'lock'
+            }
+        ];
+
+        // Іконки SVG
+        const icons = {
+            'refresh': '<path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>',
+            'map-pin': '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+            'users': '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+            'lock': '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'
+        };
+
+        let selectedSpawn = null;
+        let rotation = { x: 0, y: 0 };
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let autoRotate = true;
+        let hoveredSpawn = null;
+
+        // Canvas
+        const canvas = document.getElementById('earthCanvas');
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const earthRadius = 150;
+        const tooltip = document.getElementById('tooltip');
+
+        // Функція для конвертації координат на сферу
+        function latLonToCartesian(lat, lon, radius) {
+            const latRad = (lat * Math.PI) / 180;
+            const lonRad = ((lon + rotation.y) * Math.PI) / 180;
+            
+            const x = centerX + radius * Math.cos(latRad) * Math.sin(lonRad);
+            const y = centerY - radius * Math.sin(latRad);
+            const z = radius * Math.cos(latRad) * Math.cos(lonRad);
+            
+            return { x, y, z };
+        }
+
+        // Малювання реалістичних хмар
+        function drawClouds() {
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate((rotation.y * Math.PI) / 360);
+            ctx.translate(-centerX, -centerY);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.globalCompositeOperation = 'screen';
+
+            // Хмарні плями
+            const cloudPositions = [
+                { x: 30, y: -50, w: 50, h: 25 },
+                { x: -60, y: 20, w: 40, h: 20 },
+                { x: 70, y: 40, w: 35, h: 18 },
+                { x: -30, y: -30, w: 45, h: 22 },
+                { x: 10, y: 60, w: 38, h: 19 }
+            ];
+
+            cloudPositions.forEach(cloud => {
+                ctx.beginPath();
+                ctx.ellipse(centerX + cloud.x, centerY + cloud.y, cloud.w, cloud.h, 0, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            ctx.restore();
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        // Малювання атмосфери
+        function drawAtmosphere() {
+            const atmosphereGradient = ctx.createRadialGradient(
+                centerX,
+                centerY,
+                earthRadius,
+                centerX,
+                centerY,
+                earthRadius + 25
+            );
+            atmosphereGradient.addColorStop(0, 'rgba(100, 150, 255, 0.4)');
+            atmosphereGradient.addColorStop(0.5, 'rgba(100, 150, 255, 0.2)');
+            atmosphereGradient.addColorStop(1, 'rgba(100, 150, 255, 0)');
+
+            ctx.fillStyle = atmosphereGradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, earthRadius + 25, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Малювання Землі
+        function drawEarth() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Тінь планети
+            ctx.save();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.beginPath();
+            ctx.arc(centerX + 10, centerY + 10, earthRadius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Основна сфера з реалістичним градієнтом
+            const gradient = ctx.createRadialGradient(
+                centerX - earthRadius * 0.4,
+                centerY - earthRadius * 0.4,
+                earthRadius * 0.1,
+                centerX,
+                centerY,
+                earthRadius * 1.2
+            );
+            gradient.addColorStop(0, '#6bc5ff');
+            gradient.addColorStop(0.3, '#3a9bd9');
+            gradient.addColorStop(0.6, '#1e6eb8');
+            gradient.addColorStop(0.85, '#0d4a8a');
+            gradient.addColorStop(1, '#052a52');
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Континенти з більш реалістичними формами
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate((rotation.y * Math.PI) / 360);
+            ctx.translate(-centerX, -centerY);
+
+            // Тіні континентів
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.globalAlpha = 0.5;
+
+            ctx.beginPath();
+            ctx.ellipse(centerX + 52, centerY - 38, 70, 35, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.ellipse(centerX + 22, centerY + 32, 40, 50, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.globalAlpha = 1;
+
+            // Континенти
+            const continentGradient = ctx.createLinearGradient(centerX - 100, centerY - 100, centerX + 100, centerY + 100);
+            continentGradient.addColorStop(0, '#3d9954');
+            continentGradient.addColorStop(0.5, '#2d7a3e');
+            continentGradient.addColorStop(1, '#1d5a2e');
+
+            ctx.fillStyle = continentGradient;
+            ctx.globalAlpha = 0.95;
+
+            // Євразія
+            ctx.beginPath();
+            ctx.ellipse(centerX + 50, centerY - 40, 70, 35, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Африка
+            ctx.beginPath();
+            ctx.ellipse(centerX + 20, centerY + 30, 40, 50, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Америка
+            ctx.beginPath();
+            ctx.ellipse(centerX - 70, centerY - 10, 35, 70, -0.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Південна Америка
+            ctx.beginPath();
+            ctx.ellipse(centerX - 65, centerY + 50, 28, 40, 0.1, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Австралія
+            ctx.beginPath();
+            ctx.ellipse(centerX + 80, centerY + 50, 25, 20, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
+            // Хмари
+            if (!lazyMode) {
+                drawClouds();
+            }
+
+            // Динамічне освітлення
+            const lightGradient = ctx.createRadialGradient(
+                centerX - earthRadius * 0.5,
+                centerY - earthRadius * 0.5,
+                0,
+                centerX,
+                centerY,
+                earthRadius * 1.5
+            );
+            lightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+            lightGradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.3)');
+            lightGradient.addColorStop(0.6, 'rgba(255, 255, 255, 0.1)');
+            lightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = lightGradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Тінь на темній стороні
+            const shadowGradient = ctx.createRadialGradient(
+                centerX + earthRadius * 0.5,
+                centerY + earthRadius * 0.5,
+                0,
+                centerX,
+                centerY,
+                earthRadius * 1.3
+            );
+            shadowGradient.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            shadowGradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.3)');
+            shadowGradient.addColorStop(1, 'rgba(0, 0, 0, 0.6)');
+
+            ctx.fillStyle = shadowGradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, earthRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Атмосфера
+            drawAtmosphere();
+
+            // Малюємо маркери
+            drawMarkers();
+        }
+
+        // Малювання маркерів
+        function drawMarkers() {
+            spawns.forEach(spawn => {
+                const pos = latLonToCartesian(spawn.lat, spawn.lon, earthRadius);
+
+                if (pos.z > -30) {
+                    const scale = Math.max(0.3, (pos.z + earthRadius) / (earthRadius * 2));
+                    const size = 12 * scale;
+                    const opacity = Math.max(0.3, scale);
+
+                    ctx.globalAlpha = opacity;
+
+                    // Розширене світіння
+                    const glowGradient = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, size * 3);
+                    glowGradient.addColorStop(0, spawn.color + 'dd');
+                    glowGradient.addColorStop(0.4, spawn.color + '88');
+                    glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    ctx.fillStyle = glowGradient;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, size * 3, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Зовнішнє кільце
+                    ctx.strokeStyle = spawn.color;
+                    ctx.lineWidth = 2 * scale;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, size + 5, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Маркер
+                    const markerGradient = ctx.createRadialGradient(
+                        pos.x - size * 0.3,
+                        pos.y - size * 0.3,
+                        0,
+                        pos.x,
+                        pos.y,
+                        size
+                    );
+                    markerGradient.addColorStop(0, '#ffffff');
+                    markerGradient.addColorStop(0.4, spawn.color);
+                    markerGradient.addColorStop(1, spawn.color);
+
+                    ctx.fillStyle = markerGradient;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2.5 * scale;
+                    ctx.beginPath();
+                    ctx.arc(pos.x, pos.y, size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Пульсація для вибраного
+                    if (selectedSpawn === spawn.id) {
+                        const pulse = Math.sin(Date.now() / 200) * 4;
+                        ctx.globalAlpha = opacity * 0.7;
+                        ctx.strokeStyle = spawn.color;
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, size + 10 + pulse, 0, Math.PI * 2);
+                        ctx.stroke();
+                        
+                        ctx.globalAlpha = opacity * 0.4;
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, size + 15 + pulse * 1.5, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+
+                    // Підсвічування при наведенні
+                    if (hoveredSpawn === spawn.id) {
+                        ctx.globalAlpha = opacity * 0.6;
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, size + 12, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
+
+                    ctx.globalAlpha = 1;
+
+                    // Лінія до поверхні з градієнтом
+                    if (pos.z > 0) {
+                        const lineGradient = ctx.createLinearGradient(pos.x, pos.y, pos.x, pos.y + 30 * scale);
+                        lineGradient.addColorStop(0, spawn.color + 'aa');
+                        lineGradient.addColorStop(1, spawn.color + '00');
+                        
+                        ctx.strokeStyle = lineGradient;
+                        ctx.lineWidth = 2 * scale;
+                        ctx.beginPath();
+                        ctx.moveTo(pos.x, pos.y);
+                        ctx.lineTo(pos.x, pos.y + 30 * scale);
+                        ctx.stroke();
+                    }
+                }
+            });
+        }
+
+        // Показати підказку
+        function showTooltip(spawn, x, y) {
+            const tooltipTitle = tooltip.querySelector('.tooltip-title');
+            const tooltipDesc = tooltip.querySelector('.tooltip-desc');
+            const tooltipCoords = tooltip.querySelector('.tooltip-coords');
+
+            tooltipTitle.textContent = spawn.name;
+            tooltipDesc.textContent = spawn.description;
+            tooltipCoords.textContent = `Координати: ${spawn.lat}°, ${spawn.lon}°`;
+
+            tooltip.style.left = x + 'px';
+            tooltip.style.top = y + 'px';
+            tooltip.style.borderColor = spawn.color;
+            tooltip.classList.add('show');
+        }
+
+        // Сховати підказку
+        function hideTooltip() {
+            tooltip.classList.remove('show');
+            hoveredSpawn = null;
+        }
+
+        // Обробка миші
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            autoRotate = false;
+            dragStart = { x: e.clientX, y: e.clientY };
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+             if (isDragging) {
+            const deltaX = e.clientX - dragStart.x;
+            rotation.y += deltaX * 0.5;
+            dragStart = { x: e.clientX, y: e.clientY };
+            hideTooltip();
+        } else {
+            // Перевірка наведення на маркер
+            let foundHover = false;
+            spawns.forEach(spawn => {
+                const pos = latLonToCartesian(spawn.lat, spawn.lon, earthRadius);
+
+                if (pos.z > -30) {
+                    const distance = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
+                    if (distance < 20) {
+                        canvas.style.cursor = 'pointer';
+                        hoveredSpawn = spawn.id;
+                        showTooltip(spawn, e.clientX, e.clientY);
+                        foundHover = true;
+                    }
+                }
+            });
+
+            if (!foundHover) {
+                canvas.style.cursor = 'move';
+                hideTooltip();
+            }
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        isDragging = false;
+        canvas.style.cursor = 'move';
+        hideTooltip();
+    });
+
+    // Клік на маркер
+    canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        spawns.forEach(spawn => {
+            if (spawn.locked) return;
+
+            const pos = latLonToCartesian(spawn.lat, spawn.lon, earthRadius);
+
+            if (pos.z > -30) {
+                const distance = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
+                if (distance < 20) {
+                    selectSpawn(spawn.id);
+                }
+            }
+        });
+    });
+
+    // Рендер карток (оновлюваний)
+    const spawnsGrid = document.getElementById('spawnsGrid');
+    function renderSpawnsGrid() {
+        spawnsGrid.innerHTML = '';
+        spawns.forEach(spawn => {
+            const card = document.createElement('div');
+            card.className = 'spawn-card' + (spawn.locked ? ' blocked' : '');
+            card.dataset.id = spawn.id;
+            card.innerHTML = `
+                <div class="spawn-icon">
+                    <svg viewBox="0 0 24 24">${icons[spawn.icon] || icons['map-pin']}</svg>
+                </div>
+                <div class="spawn-text">
+                    <div class="spawn-name">${spawn.name}</div>
+                    <div class="spawn-desc">${spawn.description}</div>
+                </div>
+            `;
+            if (!spawn.locked) {
+                card.addEventListener('click', () => selectSpawn(spawn.id));
+            }
+            spawnsGrid.appendChild(card);
+        });
+    }
+    renderSpawnsGrid();
+
+    // Вибір спавну
+    function selectSpawn(id) {
+        selectedSpawn = id;
+        document.querySelectorAll('.spawn-card').forEach(card => {
+            card.classList.remove('selected');
+            if (parseInt(card.dataset.id) === id) {
+                card.classList.add('selected');
+            }
+        });
+        document.getElementById('spawnButton').disabled = false;
+    }
+
+    // Кнопка спавну
+    document.getElementById('spawnButton').addEventListener('click', () => {
+        if (selectedSpawn) {
+            const spawn = spawns.find(s => s.id === selectedSpawn);
+            Notify.success(`Спавн на позиції: ${spawn.name}`, 'Спавн виконано');
+        } else {
+            Notify.warning('Спочатку оберіть позицію', 'Немає вибору');
+        }
+    });
+
+    // Анімація
+    function animate() {
+        if (autoRotate && !isDragging) {
+            rotation.y += 0.2;
+        }
+        drawEarth();
+        requestAnimationFrame(animate);
+    }
+
+    let lazyMode = false;
+    animate();
+
+    // ===== Адмін панель і таблиця локацій =====
+    document.addEventListener('DOMContentLoaded', () => {
+        const adminPanel = document.getElementById('adminPanel');
+        const locationsModal = document.getElementById('locationsModal');
+
+        function toggleAdminPanel(force) {
+            if (!adminPanel) return;
+            const shouldShow = typeof force === 'boolean' ? force : !adminPanel.classList.contains('show');
+            adminPanel.classList.toggle('show', shouldShow);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyU') {
+                toggleAdminPanel();
+            }
+        });
+
+        // Ініціалізація вибору кольору
+        const palette = document.getElementById('colorPalette');
+        const hiddenColor = document.getElementById('colorSelected');
+        const customInput = document.getElementById('colorCustomInput');
+        if (palette && hiddenColor) {
+            const defaultColor = hiddenColor.value || '#1d6cff';
+            palette.querySelectorAll('.color-swatch').forEach(btn => {
+                const c = btn.dataset.color;
+                btn.style.background = c;
+                btn.addEventListener('click', () => {
+                    hiddenColor.value = c;
+                    if (customInput) customInput.value = c;
+                    palette.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                });
+            });
+            let initial = Array.from(palette.querySelectorAll('.color-swatch')).find(b => (b.dataset.color || '').toLowerCase() === defaultColor.toLowerCase());
+            if (!initial) initial = palette.querySelector('.color-swatch');
+            if (initial) initial.classList.add('selected');
+        }
+        if (customInput && hiddenColor) {
+            customInput.addEventListener('input', () => {
+                hiddenColor.value = customInput.value;
+                if (palette) palette.querySelectorAll('.color-swatch').forEach(b => b.classList.remove('selected'));
+            });
+        }
+
+        // Додавання точки за шаблоном
+        const addForm = document.getElementById('adminAddForm');
+        if (addForm) {
+            addForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const data = new FormData(addForm);
+                const name = String(data.get('name') || '').trim();
+                const description = String(data.get('description') || '').trim();
+                const lat = parseFloat(String(data.get('lat')));
+                const lon = parseFloat(String(data.get('lon')));
+                const color = String(data.get('color') || '#1d6cff');
+                const locked = data.get('locked') === 'on';
+                const icon = String(data.get('icon') || 'map-pin');
+
+                if (!name || Number.isNaN(lat) || Number.isNaN(lon)) {
+                    Notify.warning('Заповніть назву і коректні координати', 'Перевірка');
+                    return;
+                }
+                if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+                    Notify.error('Координати поза діапазоном', 'Помилка');
+                    return;
+                }
+
+                const nextId = (spawns.reduce((m, s) => Math.max(m, s.id), 0) || 0) + 1;
+                spawns.push({ id: nextId, name, description, lat, lon, color, locked, icon });
+                renderSpawnsGrid();
+                Notify.success(`Додано точку: ${name}`, 'Адмін');
+                addForm.reset();
+            });
+        }
+
+        // Lazy Mode перемикач
+        const lazyToggle = document.getElementById('lazyToggle');
+        if (lazyToggle) {
+            lazyToggle.addEventListener('change', (e) => {
+                lazyMode = e.target.checked;
+                if (typeof loaderVideo !== 'undefined' && loaderVideo) {
+                    loaderVideo.preload = lazyMode ? 'none' : 'auto';
+                }
+                Notify.info(lazyMode ? 'Lazy Mode увімкнено' : 'Lazy Mode вимкнено', 'Режим');
+            });
+        }
+
+        // Табличне меню локацій
+        const locationsButton = document.getElementById('locationsButton');
+        const locationsTableBody = document.getElementById('locationsTableBody');
+        function renderLocationsTable() {
+            if (!locationsTableBody) return;
+            locationsTableBody.innerHTML = '';
+            spawns.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${s.id}</td>
+                    <td>${s.name}</td>
+                    <td>${s.description}</td>
+                    <td>${s.lat}</td>
+                    <td>${s.lon}</td>
+                    <td>${s.locked ? '🔒' : '✅'}</td>
+                    <td><span style="display:inline-block;width:16px;height:16px;border-radius:4px;background:${s.color}"></span> ${s.color}</td>
+                `;
+                locationsTableBody.appendChild(tr);
+            });
+        }
+        if (locationsButton) {
+            locationsButton.addEventListener('click', () => {
+                renderLocationsTable();
+                if (locationsModal) locationsModal.classList.add('show');
+            });
+        }
+
+        const closeLocationsBtn = document.getElementById('closeLocations');
+        if (closeLocationsBtn && locationsModal) closeLocationsBtn.addEventListener('click', () => locationsModal.classList.remove('show'));
+        const closeAdminBtn = document.getElementById('closeAdmin');
+        if (closeAdminBtn && adminPanel) closeAdminBtn.addEventListener('click', () => adminPanel.classList.remove('show'));
+    });
+
+    // Демонстраційна нотифікація (можна прибрати за потреби)
+    setTimeout(() => {
+        Notify.info('Оберіть точку на планеті або зі списку', 'Ласкаво просимо');
+    }, 1200);
+</script>
+
+<!-- Адмін панель -->
+<div class="modal-overlay" id="adminPanel">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Адмін‑панель: додати локацію</div>
+      <button class="btn secondary" id="closeAdmin">Закрити</button>
+    </div>
+    <div class="modal-body">
+      <form id="adminAddForm">
+        <div class="form-row single">
+          <input class="input" type="text" name="name" placeholder="Назва" required />
+        </div>
+        <div class="form-row single">
+          <input class="input" type="text" name="description" placeholder="Опис" />
+        </div>
+        <div class="form-row">
+          <input class="input" type="number" step="0.01" name="lat" placeholder="Широта (‑90..90)" required />
+          <input class="input" type="number" step="0.01" name="lon" placeholder="Довгота (‑180..180)" required />
+        </div>
+        <div class="form-row">
+          <div class="color-picker-row">
+            <label style="display:block;width:100%;color:#7fb1ff;font-size:12px;margin-bottom:6px;">Колір</label>
+            <div id="colorPalette" class="color-palette" role="group" aria-label="Палітра кольорів">
+              <button type="button" class="color-swatch" data-color="#1d6cff" title="#1d6cff"></button>
+              <button type="button" class="color-swatch" data-color="#ff2d55" title="#ff2d55"></button>
+              <button type="button" class="color-swatch" data-color="#34c759" title="#34c759"></button>
+              <button type="button" class="color-swatch" data-color="#ff9f0a" title="#ff9f0a"></button>
+              <button type="button" class="color-swatch" data-color="#ff3b30" title="#ff3b30"></button>
+              <button type="button" class="color-swatch" data-color="#a4b0be" title="#a4b0be"></button>
+              <button type="button" class="color-swatch" data-color="#8e8e93" title="#8e8e93"></button>
+              <button type="button" class="color-swatch" data-color="#0fb9b1" title="#0fb9b1"></button>
+              <button type="button" class="color-swatch" data-color="#ffa801" title="#ffa801"></button>
+              <button type="button" class="color-swatch" data-color="#2ecc71" title="#2ecc71"></button>
+              <button type="button" class="color-swatch" data-color="#e74c3c" title="#e74c3c"></button>
+              <button type="button" class="color-swatch" data-color="#9b59b6" title="#9b59b6"></button>
+            </div>
+            <div class="color-custom">
+              <input type="color" id="colorCustomInput" value="#1d6cff" aria-label="Кастомний колір" />
+            </div>
+            <input type="hidden" name="color" id="colorSelected" value="#1d6cff" />
+          </div>
+          <select class="select" name="icon">
+            <option value="map-pin">Локація</option>
+            <option value="refresh">Останнє місце</option>
+            <option value="users">Фракція</option>
+            <option value="lock">Заблоковано</option>
+          </select>
+        </div>
+        <div class="form-row single">
+          <label class="checkbox-row"><input type="checkbox" name="locked" /> Заблоковано</label>
+        </div>
+        <div class="form-row single">
+          <label class="checkbox-row"><input type="checkbox" id="lazyToggle" /> Увімкнути Lazy Mode</label>
+        </div>
+        <div class="modal-actions">
+          <button class="btn primary" type="submit">Додати точку</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
-
-    <div class="content-wrapper">
-        <div class="select-spawn-container">
-            <div class="select-spawn">
-                <div class="model-wrapper">
-                    <div class="model first">
-                        <div class="model second">
-                            <img src="./img/icons/accses-spawn.png" alt="accses-spawn" class="accses-spawn">
-                        </div>
-                    </div>
-                </div>
-                <div class="text-content">
-                    <h1 class="text-teg first">МЕСТО ВЫХОДА</h1>
-                    <h2 class="text-teg second">ПОСЛЕДНЕЕ МЕСТО ГДЕ ВЫ БЫЛИ</h2>
-                </div>
-            </div>
-
-            <div class="select-spawn">
-                <div class="model-wrapper">
-                    <div class="model first">
-                        <div class="model second">
-                            <img src="./img/icons/accses-spawn.png" alt="accses-spawn" class="accses-spawn">
-                        </div>
-                    </div>
-                </div>
-                <div class="text-content">
-                    <h1 class="text-teg first">НАЧАЛЬНАЯ ПОЗИЦИЯ №1</h1>
-                    <h2 class="text-teg second">МЕСТО ГДЕ ПОЯВЛЯЮТЬСЯ НОВИНЬКИЕ НУ ИЛИ ТЕ У КОТОРЫХ</h2>
-                </div>
-            </div>
-
-            <div class="select-spawn">
-                <div class="model-wrapper">
-                    <div class="model first">
-                        <div class="model second">
-                            <img src="./img/icons/accses-spawn.png" alt="accses-spawn" class="accses-spawn">
-                        </div>
-                    </div>
-                </div>
-                <div class="text-content">
-                    <h1 class="text-teg first">ФРАКЦИЯ</h1>
-                    <h2 class="text-teg second">МЕСТО ГДЕ ВЫ РАБОТАЕТЕ</h2>
-                </div>
-            </div>
-
-            <!-- 🔒 Заблокована кнопка -->
-            <div class="select-spawn blocked">
-                <div class="model-wrapper">
-                    <div class="model first">
-                        <div class="model second">
-                            <img src="./img/icons/block-spawn.png" alt="blocked-spawn" class="accses-spawn">
-                        </div>
-                    </div>
-                </div>
-                <div class="text-content">
-                    <h1 class="text-teg first">ДОМ</h1>
-                    <h2 class="text-teg second">ЭТА ПОЗИЦИЯ НЕДОСТУПНА</h2>
-                </div>
-            </div>
-        </div>
-
-        <button class="accept-button">
-            <span class="text-spawn-main">СПАВН</span>
-        </button>
+<!-- Табличне меню локацій -->
+<div class="modal-overlay" id="locationsModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Усі локації</div>
+      <button class="btn secondary" id="closeLocations">Закрити</button>
     </div>
+    <div class="modal-body">
+      <table class="locations">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>Опис</th>
+            <th>Широта</th>
+            <th>Довгота</th>
+            <th>Статус</th>
+            <th>Колір</th>
+          </tr>
+        </thead>
+        <tbody id="locationsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
